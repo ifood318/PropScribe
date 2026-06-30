@@ -100,4 +100,4 @@ Point it to your Railway/Render URL.
 - Claude API: ~$0.01–0.03 per generation
 - 100 users on Pro plan = ~₦1.2M revenue, ~₦15,000 in API costs
 
-**Profit margin is enormous.**
+
