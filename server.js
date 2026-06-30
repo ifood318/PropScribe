@@ -17,6 +17,9 @@ const {
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// Trust Railway/Render/etc reverse proxy
+app.set('trust proxy', 1)
+
 // Hard fail if critical env vars are missing
 if (!process.env.GROQ_API_KEY)   { console.error('GROQ_API_KEY missing in .env'); process.exit(1) }
 if (!process.env.JWT_SECRET)     { console.error('JWT_SECRET missing in .env'); process.exit(1) }
@@ -47,7 +50,11 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    // Allow requests with no origin (mobile apps, curl, same-origin)
+    if (!origin) return cb(null, true)
+    if (allowedOrigins.includes(origin)) return cb(null, true)
+    // In production allow any railway/render subdomain automatically
+    if (origin.endsWith('.railway.app') || origin.endsWith('.up.railway.app') || origin.endsWith('.onrender.com')) return cb(null, true)
     cb(new Error('Not allowed by CORS'))
   },
   credentials: true,
